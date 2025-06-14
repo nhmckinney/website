@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date History Gallery - Chloe and Nathan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fef6f0;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #ffcccc;
+            overflow: hidden;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .navbar a {
+            display: inline-block;
+            color: #333;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #ff9999;
+            color: white;
+            border-radius: 5px;
+        }
+        .content {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        .date-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .date-card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: left;
+            transition: transform 0.3s ease-in-out;
+        }
+        .date-card:hover {
+            transform: translateY(-5px);
+        }
+        .date-card h2 {
+            color: #ff6666;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #ffcccc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .date-card p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .date-card .images {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .date-card .images img {
+            width: 100%; /* Adjust to make images responsive within card */
+            max-width: 130px; /* Max width for each image */
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) {
+            .date-card {
+                width: 90%;
+            }
+            .date-card .images img {
+                max-width: 48%; /* For smaller screens, allow two images to take more width */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="website1.3.html">Home</a>
+        <a href="calendar.html">Google Calendar</a>
+        <a href="gallery.html">Date History Gallery</a>
+        <a href="photos.html">Photo Archive</a>
+        <a href="spotify.html">Spotify</a>
+        <a href="countdown.html">Anniversary Countdown</a>
+    </div>
+
+    <div class="content">
+        <h1>Date History Gallery 💖</h1>
+        <p>A collection of our most cherished memories</p>
+
+        <div class="date-gallery" id="dateGallery">
+            <!-- Date cards will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data for dates. In a real application, this would likely come from a backend or a more robust data source.
+        const dates = [
+            {
+                number: 1,
+                title: "First Coffee Date",
+                location: "Cozy Bean Cafe",
+                date: "January 15, 2023",
+                activities: "blah blah blah",
+                images: [
+                    "images/sexyBikini.JPG",
+                    "https://placehold.co/200x150/ff6666/ffffff?text=Smiling"
+                ]
+            },
+            {
+                number: 2,
+                title: "Sunset Hike Adventure",
+                location: "Whispering Pines Trail",
+                date: "February 28, 2023",
+                activities: "blah blah blah",
+                images: [
+                    "https://placehold.co/200x150/99ccff/ffffff?text=Hike+View",
+                    "https://placehold.co/200x150/6699ff/ffffff?text=Us+Hiking"
+                ]
+            },
+            {
+                number: 3,
+                title: "Stargazing Night",
+                location: "Orion's Peak",
+                date: "March 10, 2023",
+                activities: "blah blah blah",
+                images: [
+                    "https://placehold.co/200x150/333366/ffffff?text=Stars",
+                    "https://placehold.co/200x150/666699/ffffff?text=Telescope"
+                ]
+            },
+            {
+                number: 4,
+                title: "Cooking Class Fun",
+                location: "The Culinary Studio",
+                date: "April 5, 2023",
+                activities: "blah blah blah",
+                images: [
+                    "https://placehold.co/200x150/ffcc99/ffffff?text=Cooking",
+                    "https://placehold.co/200x150/ff9966/ffffff?text=Dish"
+                ]
+            },
+            {
+                number: 5,
+                title: "Beach Picnic & Sunset",
+                location: "Paradise Cove",
+                date: "May 20, 2023",
+                activities: "blah blah blah",
+                images: [
+                    "https://placehold.co/200x150/ffff99/ffffff?text=Picnic",
+                    "https://placehold.co/200x150/ffcc66/ffffff?text=Sunset"
+                ]
+            },
+            {
+                number: 6,
+                title: "Amusement Park Thrills",
+                location: "Adventureland",
+                date: "June 12, 2023",
+                activities: "blah blah blah",
+                images: [
+                    "https://placehold.co/200x150/ff6699/ffffff?text=Rollercoaster",
+                    "https://placehold.co/200x150/cc3366/ffffff?text=Fun"
+                ]
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateGallery = document.getElementById('dateGallery');
+
+            dates.forEach(date => {
+                const dateCard = document.createElement('div');
+                dateCard.classList.add('date-card');
+
+                let imageHtml = '';
+                date.images.forEach(imgSrc => {
+                    imageHtml += `<img src="${imgSrc}" alt="${date.title} image">`;
+                });
+
+                dateCard.innerHTML = `
+                    <h2>Date ${date.number}: ${date.title}</h2>
+                    <p><strong>When:</strong> ${date.date}</p>
+                    <p><strong>Where:</strong> ${date.location}</p>
+                    <p><strong>What we did:</strong> ${date.activities}</p>
+                    <div class="images">
+                        ${imageHtml}
+                    </div>
+                `;
+                dateGallery.appendChild(dateCard);
+            });
+        });
+    </script>
+
+</body>
+</html>

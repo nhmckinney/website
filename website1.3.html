@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chloe and Nathan's Website</title>
+    <script defer src="countdownApp.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fef6f0;
+        }
+        .navbar {
+            background-color: #ffcccc;
+            overflow: hidden;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .navbar a {
+            display: inline-block;
+            color: #333;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #ff9999;
+            color: white;
+            border-radius: 5px;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .gallery img {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        #countdown_timer {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="website1.3.html">Home</a>
+        <a href="calendar.html">Google Calendar</a>
+        <a href="gallery.html">Date History Gallery</a>
+        <a href="photos.html">Photo Archive</a>
+        <a href="spotify.html">Spotify</a>
+        <a href="countdown.html">Anniversary Countdown</a>
+    </div>
+
+    <div id="home" class="content">
+        <h1>Welcome to Chloe and Nathan's Special Website! ❤️</h1>
+        <p>Happy anniversary! I love you!</p>
+
+        <div class="gallery">
+            <img src="images/test.jpg" alt="Photo 1">
+            <img src="images/chloeBikini.JPG" alt="Photo 2">
+            <img src="images/sexyBikini.JPG" alt="Photo 3">
+        </div>
+    </div>
+
+</body>
+</html>
