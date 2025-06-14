@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Archive - Chloe and Nathan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fef6f0;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #ffcccc;
+            overflow: hidden;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .navbar a {
+            display: inline-block;
+            color: #333;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #ff9999;
+            color: white;
+            border-radius: 5px;
+        }
+        .content {
+            padding: 50px 20px;
+            text-align: center;
+            max-width: 1200px; /* Max width for content */
+            margin: 0 auto; /* Center content */
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid columns */
+            gap: 20px; /* Space between photos */
+            margin-top: 30px;
+            justify-content: center; /* Center grid items */
+        }
+        .photo-item {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden; /* Ensures image corners are rounded */
+            transition: transform 0.3s ease-in-out;
+            display: flex; /* For centering content within item */
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 15px; /* Space for caption */
+        }
+        .photo-item:hover {
+            transform: translateY(-5px);
+        }
+        .photo-item img {
+            width: 100%;
+            height: 250px; /* Fixed height for consistent look */
+            object-fit: cover; /* Ensures images fill the space without distortion */
+            display: block; /* Removes extra space below image */
+            border-bottom: 1px solid #eee; /* Separator for image and caption */
+            margin-bottom: 10px;
+        }
+        .photo-item .caption {
+            font-size: 0.95em;
+            color: #555;
+            padding: 0 15px; /* Padding for text */
+            text-align: center;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 15px;
+            }
+            .photo-grid {
+                grid-template-columns: 1fr; /* Stack items on small screens */
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="website1.3.html">Home</a>
+        <a href="calendar.html">Google Calendar</a>
+        <a href="gallery.html">Date History Gallery</a>
+        <a href="photos.html">Photo Archive</a>
+        <a href="spotify.html">Spotify</a>
+        <a href="countdown.html">Anniversary Countdown</a>
+        <a href="shoppinglist.html">Shared Shopping List</a>
+    </div>
+
+    <div class="content">
+        <h1>📸 Our Photo Archive</h1>
+        <p>BADDDDDDIEEEEE. POSE FOR ME</p>
+
+        <div class="photo-grid">
+            <!-- Example Photo Items - Add more as needed -->
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/ff9999/ffffff?text=Date+Night" alt="Our first date night">
+                <p class="caption">Cozy dinner from our first date night!</p>
+            </div>
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/99ccff/ffffff?text=Beach+Day" alt="Sunny beach day">
+                <p class="caption">Fun in the sun at the beach.</p>
+            </div>
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/ffcc66/ffffff?text=Hiking+Trip" alt="Scenic mountain hike">
+                <p class="caption">Reached the summit on our hiking trip!</p>
+            </div>
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/cc99ff/ffffff?text=City+Exploration" alt="Exploring the city">
+                <p class="caption">Wandering through the city streets together.</p>
+            </div>
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/66cc99/ffffff?text=Cooking+Class" alt="Cooking class fun">
+                <p class="caption">Made some delicious food at the cooking class.</p>
+            </div>
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/ff6666/ffffff?text=Concert+Night" alt="Live music concert">
+                <p class="caption">Unforgettable night at the concert!</p>
+            </div>
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/3399ff/ffffff?text=Autumn+Walk" alt="Autumn walk in the park">
+                <p class="caption">Beautiful autumn colors during our walk.</p>
+            </div>
+            <div class="photo-item">
+                <img src="https://placehold.co/400x250/ffff99/ffffff?text=Home+Relax" alt="Relaxing at home">
+                <p class="caption">Just chilling and enjoying our time at home.</p>
+            </div>
+            <!-- Add more photo-item divs here for additional photos -->
+        </div>
+    </div>
+
+</body>
+</html>
