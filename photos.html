@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Archive - Chloe and Nathan</title>
+
+    <!-- Google Identity Services (GIS) for OAuth 2.0 -->
+    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+    <!-- Google API Client Library -->
+    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+    <!-- Your custom JavaScript for Google Photos integration -->
+    <script src="photosApp.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,54 +42,130 @@
         .content {
             padding: 50px 20px;
             text-align: center;
-            max-width: 1200px; /* Max width for content */
-            margin: 0 auto; /* Center content */
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid columns */
-            gap: 20px; /* Space between photos */
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        #authorize_button {
+            background-color: #ff9999;
+            color: white;
+        }
+        #authorize_button:hover {
+            background-color: #ff6666;
+        }
+        #signout_button {
+            background-color: #cccccc;
+            color: #333;
+        }
+        #signout_button:hover {
+            background-color: #aaaaaa;
+        }
+        .photo-gallery-content {
             margin-top: 30px;
-            justify-content: center; /* Center grid items */
+            text-align: left;
         }
-        .photo-item {
+        .album-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .album-card {
             background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            overflow: hidden; /* Ensures image corners are rounded */
-            transition: transform 0.3s ease-in-out;
-            display: flex; /* For centering content within item */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 15px; /* Space for caption */
         }
-        .photo-item:hover {
-            transform: translateY(-5px);
+        .album-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
-        .photo-item img {
-            width: 100%;
-            height: 250px; /* Fixed height for consistent look */
-            object-fit: cover; /* Ensures images fill the space without distortion */
-            display: block; /* Removes extra space below image */
-            border-bottom: 1px solid #eee; /* Separator for image and caption */
+        .album-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
             margin-bottom: 10px;
+            border: 1px solid #eee;
         }
-        .photo-item .caption {
-            font-size: 0.95em;
-            color: #555;
-            padding: 0 15px; /* Padding for text */
-            text-align: center;
+        .album-card h3 {
+            font-size: 1.1em;
+            color: #333;
+            margin: 0;
+            word-break: break-word; /* Ensure long titles wrap */
         }
 
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 768px) {
-            .content {
-                padding: 30px 15px;
-            }
-            .photo-grid {
-                grid-template-columns: 1fr; /* Stack items on small screens */
-                gap: 15px;
-            }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .photo-grid img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .photo-grid img:hover {
+            transform: scale(1.03);
+        }
+        .message {
+            color: #666;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        /* Message box styling for alerts */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+        .message-box p {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .message-box button {
+            background-color: #ff6666;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .message-box button:hover {
+            background-color: #e04444;
         }
     </style>
 </head>
@@ -91,7 +175,6 @@
     <div class="navbar">
         <a href="website1.3.html">Home</a>
         <a href="calendar.html">Google Calendar</a>
-        <a href="gallery.html">Date History Gallery</a>
         <a href="photos.html">Photo Archive</a>
         <a href="spotify.html">Spotify</a>
         <a href="countdown.html">Anniversary Countdown</a>
@@ -99,45 +182,27 @@
     </div>
 
     <div class="content">
-        <h1>📸 Our Photo Archive</h1>
-        <p>BADDDDDDIEEEEE. POSE FOR ME</p>
+        <h1>📸 Our Photo Archive (Google Photos)</h1>
+        <p>Connect your Google Photos to see our shared memories!</p>
 
-        <div class="photo-grid">
-            <!-- Example Photo Items - Add more as needed -->
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/ff9999/ffffff?text=Date+Night" alt="Our first date night">
-                <p class="caption">Cozy dinner from our first date night!</p>
+        <button id="authorize_button" disabled>Connect Google Photos</button>
+        <button id="signout_button" style="display: none;">Sign Out</button>
+
+        <div id="gallery_content" class="photo-gallery-content">
+            <p class="message" id="gallery_message">Please connect your Google Photos account.</p>
+            <div id="album_list" class="album-list">
+                <!-- Albums will be loaded here -->
             </div>
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/99ccff/ffffff?text=Beach+Day" alt="Sunny beach day">
-                <p class="caption">Fun in the sun at the beach.</p>
+            <div id="photo_grid" class="photo-grid">
+                <!-- Photos from selected album will be loaded here -->
             </div>
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/ffcc66/ffffff?text=Hiking+Trip" alt="Scenic mountain hike">
-                <p class="caption">Reached the summit on our hiking trip!</p>
-            </div>
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/cc99ff/ffffff?text=City+Exploration" alt="Exploring the city">
-                <p class="caption">Wandering through the city streets together.</p>
-            </div>
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/66cc99/ffffff?text=Cooking+Class" alt="Cooking class fun">
-                <p class="caption">Made some delicious food at the cooking class.</p>
-            </div>
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/ff6666/ffffff?text=Concert+Night" alt="Live music concert">
-                <p class="caption">Unforgettable night at the concert!</p>
-            </div>
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/3399ff/ffffff?text=Autumn+Walk" alt="Autumn walk in the park">
-                <p class="caption">Beautiful autumn colors during our walk.</p>
-            </div>
-            <div class="photo-item">
-                <img src="https://placehold.co/400x250/ffff99/ffffff?text=Home+Relax" alt="Relaxing at home">
-                <p class="caption">Just chilling and enjoying our time at home.</p>
-            </div>
-            <!-- Add more photo-item divs here for additional photos -->
         </div>
+    </div>
+
+    <!-- Message Box HTML -->
+    <div id="messageBox" class="message-box">
+        <p id="messageBoxText"></p>
+        <button id="messageBoxOk">OK</button>
     </div>
 
 </body>
