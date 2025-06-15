@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date History Gallery - Chloe and Nathan</title>
+    <title>Photo History Gallery - Chloe and Nathan</title>
+
+    <!-- Google Identity Services (GIS) for OAuth 2.0 -->
+    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+    <!-- Google API Client Library -->
+    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+    <!-- Your custom JavaScript for Google Photos integration -->
+    <script src="galleryApp.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,60 +42,130 @@
         .content {
             padding: 50px 20px;
             text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .date-gallery {
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        #authorize_button {
+            background-color: #ff9999;
+            color: white;
+        }
+        #authorize_button:hover {
+            background-color: #ff6666;
+        }
+        #signout_button {
+            background-color: #cccccc;
+            color: #333;
+        }
+        #signout_button:hover {
+            background-color: #aaaaaa;
+        }
+        .photo-gallery-content {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .album-list {
             display: flex;
             flex-wrap: wrap;
+            gap: 15px;
             justify-content: center;
-            gap: 30px;
-            margin-top: 30px;
+            margin-bottom: 30px;
         }
-        .date-card {
+        .album-card {
             background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 300px;
-            text-align: left;
-            transition: transform 0.3s ease-in-out;
-        }
-        .date-card:hover {
-            transform: translateY(-5px);
-        }
-        .date-card h2 {
-            color: #ff6666;
-            margin-top: 0;
-            font-size: 1.8em;
-            border-bottom: 2px solid #ffcccc;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .date-card p {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-        .date-card .images {
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
+            flex-direction: column;
+            align-items: center;
         }
-        .date-card .images img {
-            width: 100%; /* Adjust to make images responsive within card */
-            max-width: 130px; /* Max width for each image */
+        .album-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .album-card img {
+            width: 100px;
             height: 100px;
             object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
         }
-        @media (max-width: 768px) {
-            .date-card {
-                width: 90%;
-            }
-            .date-card .images img {
-                max-width: 48%; /* For smaller screens, allow two images to take more width */
-            }
+        .album-card h3 {
+            font-size: 1.1em;
+            color: #333;
+            margin: 0;
+            word-break: break-word; /* Ensure long titles wrap */
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .photo-grid img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .photo-grid img:hover {
+            transform: scale(1.03);
+        }
+        .message {
+            color: #666;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        /* Message box styling for alerts */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+        .message-box p {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .message-box button {
+            background-color: #ff6666;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .message-box button:hover {
+            background-color: #e04444;
         }
     </style>
 </head>
@@ -95,7 +173,7 @@
 <body>
 
     <div class="navbar">
-        <a href="index.html">Home</a>
+        <a href="website1.3.html">Home</a>
         <a href="calendar.html">Google Calendar</a>
         <a href="gallery.html">Date History Gallery</a>
         <a href="photos.html">Photo Archive</a>
@@ -105,110 +183,28 @@
     </div>
 
     <div class="content">
-        <h1>Date History Gallery 💖</h1>
-        <p>A collection of our most cherished memories</p>
+        <h1>📸 Our Date History Gallery (Google Photos)</h1>
+        <p>Connect your Google Photos to see our shared memories!</p>
 
-        <div class="date-gallery" id="dateGallery">
-            <!-- Date cards will be inserted here by JavaScript -->
+        <button id="authorize_button" disabled>Connect Google Photos</button>
+        <button id="signout_button" style="display: none;">Sign Out</button>
+
+        <div id="gallery_content" class="photo-gallery-content">
+            <p class="message" id="gallery_message">Please connect your Google Photos account.</p>
+            <div id="album_list" class="album-list">
+                <!-- Albums will be loaded here -->
+            </div>
+            <div id="photo_grid" class="photo-grid">
+                <!-- Photos from selected album will be loaded here -->
+            </div>
         </div>
     </div>
 
-    <script>
-        // Sample data for dates. In a real application, this would likely come from a backend or a more robust data source.
-        const dates = [
-            {
-                number: 1,
-                title: "First Coffee Date",
-                location: "Cozy Bean Cafe",
-                date: "January 15, 2023",
-                activities: "blah blah blah",
-                images: [
-                    "images/sexyBikini.JPG",
-                    "https://placehold.co/200x150/ff6666/ffffff?text=Smiling"
-                ]
-            },
-            {
-                number: 2,
-                title: "Sunset Hike Adventure",
-                location: "Whispering Pines Trail",
-                date: "February 28, 2023",
-                activities: "blah blah blah",
-                images: [
-                    "https://placehold.co/200x150/99ccff/ffffff?text=Hike+View",
-                    "https://placehold.co/200x150/6699ff/ffffff?text=Us+Hiking"
-                ]
-            },
-            {
-                number: 3,
-                title: "Stargazing Night",
-                location: "Orion's Peak",
-                date: "March 10, 2023",
-                activities: "blah blah blah",
-                images: [
-                    "https://placehold.co/200x150/333366/ffffff?text=Stars",
-                    "https://placehold.co/200x150/666699/ffffff?text=Telescope"
-                ]
-            },
-            {
-                number: 4,
-                title: "Cooking Class Fun",
-                location: "The Culinary Studio",
-                date: "April 5, 2023",
-                activities: "blah blah blah",
-                images: [
-                    "https://placehold.co/200x150/ffcc99/ffffff?text=Cooking",
-                    "https://placehold.co/200x150/ff9966/ffffff?text=Dish"
-                ]
-            },
-            {
-                number: 5,
-                title: "Beach Picnic & Sunset",
-                location: "Paradise Cove",
-                date: "May 20, 2023",
-                activities: "blah blah blah",
-                images: [
-                    "https://placehold.co/200x150/ffff99/ffffff?text=Picnic",
-                    "https://placehold.co/200x150/ffcc66/ffffff?text=Sunset"
-                ]
-            },
-            {
-                number: 6,
-                title: "Amusement Park Thrills",
-                location: "Adventureland",
-                date: "June 12, 2023",
-                activities: "blah blah blah",
-                images: [
-                    "https://placehold.co/200x150/ff6699/ffffff?text=Rollercoaster",
-                    "https://placehold.co/200x150/cc3366/ffffff?text=Fun"
-                ]
-            }
-        ];
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const dateGallery = document.getElementById('dateGallery');
-
-            dates.forEach(date => {
-                const dateCard = document.createElement('div');
-                dateCard.classList.add('date-card');
-
-                let imageHtml = '';
-                date.images.forEach(imgSrc => {
-                    imageHtml += `<img src="${imgSrc}" alt="${date.title} image">`;
-                });
-
-                dateCard.innerHTML = `
-                    <h2>Date ${date.number}: ${date.title}</h2>
-                    <p><strong>When:</strong> ${date.date}</p>
-                    <p><strong>Where:</strong> ${date.location}</p>
-                    <p><strong>What we did:</strong> ${date.activities}</p>
-                    <div class="images">
-                        ${imageHtml}
-                    </div>
-                `;
-                dateGallery.appendChild(dateCard);
-            });
-        });
-    </script>
+    <!-- Message Box HTML -->
+    <div id="messageBox" class="message-box">
+        <p id="messageBoxText"></p>
+        <button id="messageBoxOk">OK</button>
+    </div>
 
 </body>
 </html>
