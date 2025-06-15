@@ -8,7 +8,7 @@ let tokenClient;
 let gapiInited = false;
 let gisInited = false;
 
-// Declare DOM elements globally but assign them inside DOMContentLoaded
+// Declare DOM elements globally
 let authorizeButton;
 let signoutButton;
 let galleryContent;
@@ -21,8 +21,6 @@ let messageBoxOk;
 
 // Function to show custom message box
 function showMessageBox(message) {
-    // Ensure these elements are assigned before this function is called
-    // or handle null cases here.
     if (messageBox && messageBoxText && messageBoxOk) {
         messageBoxText.textContent = message;
         messageBox.style.display = 'block';
@@ -36,8 +34,66 @@ function showMessageBox(message) {
     }
 }
 
+/**
+ * Callback function called when the gapi.js client library is loaded.
+ */
+function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
+}
+
+/**
+ * Initializes the Google API client.
+ */
+async function initializeGapiClient() {
+    try {
+        await gapi.client.init({
+            apiKey: API_KEY,
+            discoveryDocs: DISCOVERY_DOCS,
+        });
+        gapiInited = true;
+        checkLibrariesLoaded(); // Check if both libraries are ready
+    } catch (error) {
+        console.error("Error initializing gapi client:", error);
+        showMessageBox("Failed to initialize Google API client. Check API Key and network. " + error.message);
+    }
+}
+
+/**
+ * Callback function called when the gis.js client library is loaded.
+ */
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: '', // Handled by authorizeButton.onclick
+    });
+    gisInited = true;
+    checkLibrariesLoaded(); // Check if both libraries are ready
+}
+
+/**
+ * Checks if both GAPI and GIS libraries are loaded and then enables buttons.
+ */
+function checkLibrariesLoaded() {
+    // Ensure DOM elements are assigned before trying to use them
+    if (!authorizeButton) {
+        console.warn("DOM elements not yet assigned when checkLibrariesLoaded is called.");
+        return; // Exit if DOM not ready
+    }
+
+    if (gapiInited && gisInited) {
+        authorizeButton.disabled = false; // Enable the button
+        authorizeButton.style.display = 'block'; // Make sure it's visible if hidden by default CSS
+        if (galleryMessage) {
+            galleryMessage.textContent = 'Click "Connect Google Photos" to view your albums.';
+        }
+    }
+}
+
+
 // Wrap all DOM element assignments and event listeners in DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Assign DOM elements
     authorizeButton = document.getElementById('authorize_button');
     signoutButton = document.getElementById('signout_button');
     galleryContent = document.getElementById('gallery_content');
@@ -48,9 +104,20 @@ document.addEventListener('DOMContentLoaded', () => {
     messageBoxText = document.getElementById('messageBoxText');
     messageBoxOk = document.getElementById('messageBoxOk');
 
+    // Initially hide the authorize button until scripts are loaded and ready
+    if (authorizeButton) {
+        authorizeButton.style.display = 'none';
+        authorizeButton.disabled = true; // Keep it disabled until ready
+    }
+
     // Attach event listeners after elements are guaranteed to be available
     if (authorizeButton) {
         authorizeButton.onclick = () => {
+            // Check if tokenClient is initialized before requesting access token
+            if (!tokenClient) {
+                showMessageBox("Google Identity Services not fully initialized. Please try refreshing the page.");
+                return;
+            }
             tokenClient.callback = async (resp) => {
                 if (resp.error !== undefined) {
                     console.error("Authorization error:", resp);
@@ -71,73 +138,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (signoutButton) {
         signoutButton.onclick = () => {
+            if (!gapi.client.getToken()) {
+                showMessageBox("Not currently signed in.");
+                return;
+            }
             google.accounts.oauth2.revoke(gapi.client.getToken().access_token, () => {
                 if (galleryContent) galleryContent.innerHTML = '<p class="message">Signed out. Connect again to view photos.</p>';
-                if (authorizeButton) authorizeButton.style.display = 'block';
+                if (authorizeButton) {
+                    authorizeButton.style.display = 'block';
+                    authorizeButton.disabled = true; // Re-disable until next full load/auth attempt
+                }
                 if (signoutButton) signoutButton.style.display = 'none';
                 if (albumListDiv) albumListDiv.innerHTML = '';
                 if (photoGridDiv) photoGridDiv.innerHTML = '';
                 if (galleryMessage) galleryMessage.textContent = 'Please connect your Google Photos account.';
+
+                // Reset GAPI and GIS flags
+                gapiInited = false;
+                gisInited = false;
+                // Re-enable authorization flow logic if needed
             });
         };
     } else {
         console.error("Signout button not found!");
     }
 
-    // Call maybeEnableButtons here initially as well, after buttons are assigned
-    maybeEnableButtons();
+    // Call checkLibrariesLoaded here initially after DOM elements are assigned.
+    // This will handle the case where gapiLoaded/gisLoaded fire before DOMContentLoaded.
+    checkLibrariesLoaded();
 });
 
-
-/**
- * Callback function called when the gapi.js client library is loaded.
- */
-function gapiLoaded() {
-    gapi.load('client', initializeGapiClient);
-}
-
-/**
- * Initializes the Google API client.
- */
-async function initializeGapiClient() {
-    try {
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: DISCOVERY_DOCS,
-        });
-        gapiInited = true;
-        maybeEnableButtons();
-    } catch (error) {
-        console.error("Error initializing gapi client:", error);
-        showMessageBox("Failed to initialize Google API client. Check API Key and network. " + error.message);
-    }
-}
-
-/**
- * Callback function called when the gis.js client library is loaded.
- */
-function gisLoaded() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: '', // Handled by authorizeButton.onclick
-    });
-    gisInited = true;
-    maybeEnableButtons();
-}
-
-/**
- * Enables the authorize button if both gapi and gis are loaded.
- */
-function maybeEnableButtons() {
-    // Ensure authorizeButton is not null before accessing its style property
-    if (gapiInited && gisInited && authorizeButton) {
-        authorizeButton.style.display = 'block';
-        if (galleryMessage) {
-            galleryMessage.textContent = 'Click "Connect Google Photos" to view your albums.';
-        }
-    }
-}
 
 /**
  * Lists the user's Google Photos albums.
@@ -158,6 +188,9 @@ async function listAlbums() {
         }
 
         if (galleryMessage) galleryMessage.textContent = 'Select an album to view photos:';
+        // Ensure albumListDiv is visible when displaying albums
+        if (albumListDiv) albumListDiv.style.display = 'flex'; // Assuming album-list class uses flex
+
         albums.forEach(album => {
             const albumCard = document.createElement('div');
             albumCard.classList.add('album-card');
@@ -195,8 +228,9 @@ async function listMediaItems(albumId) {
 
         const mediaItems = response.result.mediaItems;
         if (photoGridDiv) photoGridDiv.innerHTML = '';
-        if (albumListDiv) albumListDiv.style.display = 'none';
+        if (albumListDiv) albumListDiv.style.display = 'none'; // Hide album list once photos are loaded
         if (galleryMessage) galleryMessage.textContent = 'Click on an album cover above to go back and select a different album.';
+
 
         if (!mediaItems || mediaItems.length === 0) {
             if (galleryMessage) galleryMessage.textContent = 'No photos found in this album.';
