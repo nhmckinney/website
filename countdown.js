@@ -27,7 +27,29 @@ function updateCountdown() {
     const seconds = Math.floor((diff / 1000) % 60);
 
     document.getElementById("countdown_timer").innerHTML =
-        `Our ${ordinal(anniversaryNumber)} Anniversary is in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        `Our ${ordinal(anniversaryNumber)} Anniversary is in <br>${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+    // Calculate days together
+    const startDate = new Date(startYear, anniversaryMonth, anniversaryDay);
+    const daysTogether = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+    document.getElementById("days_together").innerHTML =
+        `We've been together for <br>${daysTogether} days! ❤️`;
+
+    // Calculate next monthly anniversary
+    let nextMonthlyAnniversary = new Date(now.getFullYear(), now.getMonth(), anniversaryDay);
+    if (now.getDate() > anniversaryDay) {
+        nextMonthlyAnniversary.setMonth(nextMonthlyAnniversary.getMonth() + 1);
+    }
+    // Handle cases where the anniversary day doesn't exist in the next month (e.g., Feb 30)
+    if (nextMonthlyAnniversary.getDate() !== anniversaryDay) {
+        nextMonthlyAnniversary.setDate(0); // Set to last day of previous month
+    }
+    
+    const timeToNextMonth = nextMonthlyAnniversary - now;
+    const daysToNextMonth = Math.floor(timeToNextMonth / (1000 * 60 * 60 * 24));
+
+    document.getElementById("next_monthly_anniversary").innerHTML =
+        `Next Monthly Anniversary: <br>${nextMonthlyAnniversary.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} (${daysToNextMonth} days away)`;
 }
 
 // Helper to turn 1 -> 1st, 2 -> 2nd, 3 -> 3rd, etc.

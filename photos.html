@@ -5,19 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Archive - Chloe and Nathan</title>
 
-    <!-- Google Identity Services (GIS) for OAuth 2.0 -->
-    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
-    <!-- Google API Client Library -->
-    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
-    <!-- Your custom JavaScript for Google Photos integration -->
-    <script src="photosApp.js"></script>
-
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #fef6f0;
             margin: 0;
             padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrollbar from rotations */
         }
         .navbar {
             background-color: #ffcccc;
@@ -41,131 +35,65 @@
         }
         .content {
             padding: 50px 20px;
-            text-align: center;
+            text-align: center; /* This centers the content block, but images inside will float */
             max-width: 1200px;
             margin: 0 auto;
         }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+        .photo-container {
+            /* This div will hold the floated images */
+            overflow: hidden; /* Clear floats */
+            margin-top: 20px;
+            text-align: left; /* Allow images to naturally flow from left */
         }
-        button:hover {
-            transform: translateY(-2px);
-        }
-        #authorize_button {
-            background-color: #ff9999;
-            color: white;
-        }
-        #authorize_button:hover {
-            background-color: #ff6666;
-        }
-        #signout_button {
-            background-color: #cccccc;
-            color: #333;
-        }
-        #signout_button:hover {
-            background-color: #aaaaaa;
-        }
-        .photo-gallery-content {
-            margin-top: 30px;
-            text-align: left;
-        }
-        .album-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        .album-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 15px;
-            width: 200px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .album-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-        .album-card img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            border: 1px solid #eee;
-        }
-        .album-card h3 {
-            font-size: 1.1em;
-            color: #333;
-            margin: 0;
-            word-break: break-word; /* Ensure long titles wrap */
+        .photo-container img {
+            display: block; /* Important for float to work consistently */
+            max-width: 300px; /* Maximum width for images */
+            height: auto; /* Maintain aspect ratio - NO CROPPING */
+            margin: 15px; /* Margin around each image for spacing */
+            float: left; /* Makes images flow next to each other */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Add a subtle shadow */
+            transition: transform 0.3s ease-out; /* Smooth transition for hover */
+
+            /* Haphazard elements */
+            position: relative; /* Needed for z-index and slight positioning adjustments */
         }
 
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-            justify-content: center;
+        /* Applying random-like rotations and z-index for haphazard feel */
+        .photo-container img:nth-child(even) {
+            transform: rotate(2deg);
+            margin-top: 30px; /* Slight vertical offset */
+            z-index: 2;
         }
-        .photo-grid img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+        .photo-container img:nth-child(odd) {
+            transform: rotate(-3deg);
+            margin-left: 25px; /* Slight horizontal offset */
+            z-index: 1;
         }
-        .photo-grid img:hover {
-            transform: scale(1.03);
+        .photo-container img:nth-child(3n) { /* Every third image */
+            transform: rotate(1deg);
+            margin-right: 20px;
         }
-        .message {
-            color: #666;
-            font-style: italic;
-            margin-top: 20px;
+        .photo-container img:nth-child(4n) { /* Every fourth image */
+            transform: rotate(-4deg);
+            margin-top: 10px;
         }
-        /* Message box styling for alerts */
-        .message-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            display: none; /* Hidden by default */
+        /* More specific adjustments for a very random look */
+        .photo-container img:nth-child(5) { transform: rotate(5deg); margin-left: 5px; }
+        .photo-container img:nth-child(7) { transform: rotate(-2deg); margin-top: 40px; }
+        .photo-container img:nth-child(9) { transform: rotate(3deg); margin-right: 30px; }
+        .photo-container img:nth-child(11) { transform: rotate(-1deg); margin-left: 10px; }
+
+
+        .photo-container img:hover {
+            transform: scale(1.05) rotate(0deg); /* Straighten slightly on hover and enlarge */
+            z-index: 10; /* Bring to front on hover */
         }
-        .message-box p {
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            color: #333;
-        }
-        .message-box button {
-            background-color: #ff6666;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .message-box button:hover {
-            background-color: #e04444;
+
+        /* Clearfix for the container if needed for subsequent content */
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
         }
     </style>
 </head>
@@ -183,28 +111,21 @@
     </div>
 
     <div class="content">
-        <h1>📸 Our Photo Archive (Google Photos)</h1>
-        <p>Connect your Google Photos to see our shared memories!</p>
-
-        <button id="authorize_button" disabled>Connect Google Photos</button>
-        <button id="signout_button" style="display: none;">Sign Out</button>
-
-        <div id="gallery_content" class="photo-gallery-content">
-            <p class="message" id="gallery_message">Please connect your Google Photos account.</p>
-            <div id="album_list" class="album-list">
-                <!-- Albums will be loaded here -->
+        <div class="photo-container">
+            <img src="/images/chloeBikini.jpg" alt="Our Photo 1">
+            <img src="/images/bridgeKiss.jpg" alt="Our Photo 2">
+            <img src="https://via.placeholder.com/400x250/90EE90/FFFFFF?text=Photo+3" alt="Our Photo 3">
+            <img src="https://via.placeholder.com/320x220/FFDAB9/FFFFFF?text=Photo+4">
+            <img src="https://via.placeholder.com/280x300/C0C0C0/FFFFFF?text=Photo+5">
+            <img src="https://via.placeholder.com/350x280/87CEEB/FFFFFF?text=Photo+6">
+            <img src="https://via.placeholder.com/270x200/DDA0DD/FFFFFF?text=Photo+7">
+            <img src="https://via.placeholder.com/380x250/F0E68C/FFFFFF?text=Photo+8">
+            <img src="https://via.placeholder.com/290x310/B0E0E6/FFFFFF?text=Photo+9">
+            <img src="https://via.placeholder.com/310x240/FFB6C1/FFFFFF?text=Photo+10">
+            <img src="https://via.placeholder.com/260x330/ADD8E6/FFFFFF?text=Photo+11">
+            <img src="https://via.placeholder.com/330x260/90EE90/FFFFFF?text=Photo+12">
             </div>
-            <div id="photo_grid" class="photo-grid">
-                <!-- Photos from selected album will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Message Box HTML -->
-    <div id="messageBox" class="message-box">
-        <p id="messageBoxText"></p>
-        <button id="messageBoxOk">OK</button>
-    </div>
+        <div class="clearfix"></div> </div>
 
 </body>
 </html>
