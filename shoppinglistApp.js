@@ -1,12 +1,30 @@
 // Firebase SDKs - imported from CDN in the HTML
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
 // Global variables provided by the Canvas environment
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const appId = typeof __app_id !== 'chloeandnathan-67187' ? __app_id : 'default-app-id';
 const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
 const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+const firebaseConfig = {
+    apiKey: "AIzaSyCYKEmD6--PY0G_nvtY0zEmKJrTxbpd44k",
+    authDomain: "chloeandnathan-67187.firebaseapp.com",
+    projectId: "chloeandnathan-67187",
+    storageBucket: "chloeandnathan-67187.firebasestorage.app",
+    messagingSenderId: "45564750937",
+    appId: "1:45564750937:web:42fd3ef0288ca85ad05548",
+    measurementId: "G-KRC51N25VB"
+  };
+
+  // Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 
 let db;
 let auth;
