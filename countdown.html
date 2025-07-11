@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Anniversary Countdown - Chloe and Nathan</title>
-    <script defer src="countdown.js"></script>
 
     <style>
         body {
@@ -80,6 +79,28 @@
             margin-top: 15px;
         }
 
+        .progress-container {
+            width: 80%;
+            max-width: 500px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px auto 30px auto;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%; /* Will be set by JS */
+            background: linear-gradient(to right, #ffb6c1, #ff69b4); /* Pink gradient */
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            line-height: 20px; /* Center text vertically */
+            font-size: 0.8em;
+            transition: width 1s ease-in-out; /* Smooth transition for progress */
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .countdown-item {
@@ -114,17 +135,21 @@
         <a href="photos.html">Photo Archive</a>
         <a href="spotify.html">Spotify</a>
         <a href="countdown.html">Anniversary Countdown</a>
-        <a href="shoppinglist.html">Shared Shopping List</a>
     </div>
 
     <div class="content">
         <h1>Our Anniversary Countdown 🎉</h1>
         <div class="countdown-container">
             <div id="countdown_timer" class="countdown-item"></div>
+            <!-- Progress bar for the anniversary -->
+            <div class="progress-container">
+                <div id="anniversaryProgressBar" class="progress-bar">0%</div>
+            </div>
             <div id="days_together" class="countdown-item"></div>
             <div id="next_monthly_anniversary" class="countdown-item"></div>
         </div>
     </div>
-
+<script src="countdown.js"></script>
+    
 </body>
 </html>

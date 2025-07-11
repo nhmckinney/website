@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chloe and Nathan's Website</title>
-    <script defer src="countdownApp.js"></script>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, sans-serif; 
             margin: 0;
             padding: 0;
-            background-color: #fef6f0;
+            /* Gradient background for a softer feel */
+            background: linear-gradient(to bottom, #fef6f0, #ffeddb);
+            color: #333;
         }
         .navbar {
             background-color: #ffcccc;
@@ -25,38 +27,162 @@
             padding: 14px 20px;
             text-decoration: none;
             font-weight: bold;
-            transition: background-color 0.3s;
+            /* Smooth transitions for hover effects */
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 5px; /* Ensure rounded corners on hover */
         }
         .navbar a:hover {
             background-color: #ff9999;
             color: white;
-            border-radius: 5px;
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Add shadow on hover */
         }
         .content {
             padding: 20px;
             text-align: center;
+            max-width: 1200px; /* Constrain content width */
+            margin: 0 auto; /* Center content */
         }
-        .gallery {
+        h1 {
+            font-family: Arial, sans-serif; /* Reverted font to Arial */
+            color: #ff6666;
+            margin-bottom: 20px;
+            font-size: 3em; /* Larger main heading */
+        }
+        p {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+        }
+        .list-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 30px;
+            margin-top: 30px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .gallery img {
-            width: 250px;
-            height: 250px;
-            object-fit: cover;
+        .list-card {
+            background-color: #fff;
             border-radius: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 25px;
+            width: 90%; /* Default: single column on small screens */
+            min-width: 280px; /* Minimum width for each card */
+            text-align: left;
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; /* Add transition for hover */
         }
-        .gallery img:hover {
-            transform: scale(1.05);
+        .list-card:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Increased shadow on hover */
         }
+        .list-card h2 {
+            color: #ff6666;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ffcccc;
+            padding-bottom: 10px;
+            font-size: 1.8em; /* Slightly larger headings for cards */
+        }
+        .list-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .list-card ul li {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px dotted #eee;
+        }
+        .list-card ul li:last-child {
+            border-bottom: none;
+        }
+        /* Style for list icons/emojis */
+        .list-card ul li:before {
+            content: '✨ '; /* Default sparkle icon */
+            color: #ff6666;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        /* Specific icons for each list */
+        #activitiesList li:before { content: '🎨 '; }
+        #placesList li:before { content: '📍 '; }
+
+
         #countdown_timer {
             font-size: 2em;
             margin-top: 20px;
+            color: #ff6666;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments - Mobile First Approach */
+        /* Two columns for screens wider than 600px */
+        @media (min-width: 600px) {
+            .list-card {
+                width: calc(50% - 20px); /* Two columns, accounting for gap */
+            }
+        }
+
+        /* Three columns for screens wider than 900px (desktop default) */
+        @media (min-width: 900px) {
+            .list-card {
+                width: calc(33.333% - 20px); /* Three columns, accounting for gap */
+            }
+        }
+
+        /* Styles for "Our Story So Far" section */
+        .story-section {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+        .story-section h2 {
+            color: #ff6666;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffcccc;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        .story-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .story-section ul li {
+            padding: 10px 0;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            border-bottom: 1px dotted #eee;
+        }
+        .story-section ul li:last-child {
+            border-bottom: none;
+        }
+        .story-section .story-date {
+            font-weight: bold;
+            color: #ff9999;
+            flex-shrink: 0; /* Prevent date from shrinking */
+            width: 120px; /* Fixed width for dates */
+            margin-right: 15px;
+        }
+        .story-section .story-event {
+            flex-grow: 1;
+        }
+        .story-section ul li:before {
+            content: '❤️'; /* Heart icon for story items */
+            margin-right: 10px;
+            color: #ff6666;
+            font-size: 1.2em;
+            line-height: 1;
         }
     </style>
 </head>
@@ -70,18 +196,66 @@
         <a href="photos.html">Photo Archive</a>
         <a href="spotify.html">Spotify</a>
         <a href="countdown.html">Anniversary Countdown</a>
-        <a href="shoppinglist.html">Shared Shopping List</a>
     </div>
 
     <div id="home" class="content">
         <h1>Welcome to Chloe and Nathan's Special Website! ❤️</h1>
         <p>Happy anniversary! I love you!</p>
 
-        <div class="gallery">
-            <img src="images/test.jpg" alt="Photo 1">
-            <img src="images/chloeBikini.JPG" alt="Photo 2">
-            <img src="images/sexyBikini.JPG" alt="Photo 3">
+        <div class="list-container">
+            <div class="list-card">
+                <h2>Activities to Do 🎨</h2>
+                <ul id="activitiesList">
+                    <li>Pottery painting class</li>
+                    <li>Visit a new local cafe</li>
+                    <li>Go for a long bike ride</li>
+                    <li>Have a board game night</li>
+                    <li>Try a new recipe together</li>
+                    <li>Attend a live music concert</li>
+                    <li>Build a fort and watch movies</li>
+                </ul>
+            </div>
+
+            <div class="list-card">
+                <h2>Places to Visit ✈️</h2>
+                <ul id="placesList">
+                    <li>National Park getaway</li>
+                    <li>Charming small town day trip</li>
+                    <li>Beach vacation with sunsets</li>
+                    <li>Art museum exploration</li>
+                    <li>Historical landmark tour</li>
+                    <li>Botanical garden stroll</li>
+                    <li>Cozy cabin in the mountains</li>
+                </ul>
+            </div>
+
+            <div class="list-card">
+                <h2>Shows and Movies to Watch 📺</h2>
+                <ul id="placesList">
+                    <li>Squid Game S2-3!!!</li>
+                    <li>ALL OF STAR WARS</li>
+                    <li>Hamilton (please)</li>
+                </ul>
+            </div>
         </div>
+
+
+        <div class="story-section">
+            <h2>Our Story So Far 📖</h2>
+            <ul>
+                <li>
+                    <span class="story-date">September 2024</span>
+                    <span class="story-event">Our first date: Pho and thrifting in Squirrel Hill.</span>
+                </li>
+                <li>
+                    <span class="story-date">November 11, 2024</span>
+                    <span class="story-event">We became official! I took you to Con Alma to listen to jazz. You were really scared
+                        that I was gonna go on stage and sing. We went on to the bridge and I asked to be your boyfriend hehehe
+                    </span>
+                </li>
+            </ul>
+        </div>
+
     </div>
 
 </body>

@@ -35,53 +35,59 @@
         }
         .content {
             padding: 50px 20px;
-            text-align: center; /* This centers the content block, but images inside will float */
+            text-align: center;
             max-width: 1200px;
             margin: 0 auto;
         }
         .photo-container {
-            /* This div will hold the floated images */
-            overflow: hidden; /* Clear floats */
+            /* Use CSS Grid for better control over spacing */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
+            gap: 15px; /* Gap between grid items */
             margin-top: 20px;
-            text-align: left; /* Allow images to naturally flow from left */
+            justify-content: center; /* Center items horizontally in the grid */
+            align-items: start; /* Align items to the start of their grid area vertically */
+            position: relative; /* For absolute positioning of images within for fine-tuning */
         }
         .photo-container img {
-            display: block; /* Important for float to work consistently */
-            max-width: 300px; /* Maximum width for images */
-            height: auto; /* Maintain aspect ratio - NO CROPPING */
-            margin: 15px; /* Margin around each image for spacing */
-            float: left; /* Makes images flow next to each other */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Add a subtle shadow */
-            transition: transform 0.3s ease-out; /* Smooth transition for hover */
+            display: block;
+            max-width: 100%; /* Ensure images fit within their grid cells */
+            height: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease-out, z-index 0.1s ease-out; /* Smooth transition for hover */
 
-            /* Haphazard elements */
-            position: relative; /* Needed for z-index and slight positioning adjustments */
+            /* Haphazard elements - apply slight random offsets */
+            position: relative; /* Allows z-index and top/left adjustments */
         }
 
         /* Applying random-like rotations and z-index for haphazard feel */
         .photo-container img:nth-child(even) {
             transform: rotate(2deg);
-            margin-top: 30px; /* Slight vertical offset */
+            top: 10px; /* Adjust vertical position */
+            left: 5px; /* Adjust horizontal position */
             z-index: 2;
         }
         .photo-container img:nth-child(odd) {
             transform: rotate(-3deg);
-            margin-left: 25px; /* Slight horizontal offset */
+            top: -5px;
+            left: -5px;
             z-index: 1;
         }
         .photo-container img:nth-child(3n) { /* Every third image */
             transform: rotate(1deg);
-            margin-right: 20px;
+            top: 15px;
+            left: 10px;
         }
         .photo-container img:nth-child(4n) { /* Every fourth image */
             transform: rotate(-4deg);
-            margin-top: 10px;
+            top: -10px;
+            left: -10px;
         }
         /* More specific adjustments for a very random look */
-        .photo-container img:nth-child(5) { transform: rotate(5deg); margin-left: 5px; }
-        .photo-container img:nth-child(7) { transform: rotate(-2deg); margin-top: 40px; }
-        .photo-container img:nth-child(9) { transform: rotate(3deg); margin-right: 30px; }
-        .photo-container img:nth-child(11) { transform: rotate(-1deg); margin-left: 10px; }
+        .photo-container img:nth-child(5) { transform: rotate(5deg); top: 5px; left: 15px; }
+        .photo-container img:nth-child(7) { transform: rotate(-2deg); top: 20px; left: -15px; }
+        .photo-container img:nth-child(9) { transform: rotate(3deg); top: -15px; left: 20px; }
+        .photo-container img:nth-child(11) { transform: rotate(-1deg); top: 10px; left: -10px; }
 
 
         .photo-container img:hover {
@@ -89,7 +95,7 @@
             z-index: 10; /* Bring to front on hover */
         }
 
-        /* Clearfix for the container if needed for subsequent content */
+        /* Clearfix is not strictly necessary with Grid, but can be kept if other content relies on it */
         .clearfix::after {
             content: "";
             clear: both;
@@ -107,23 +113,27 @@
         <a href="photos.html">Photo Archive</a>
         <a href="spotify.html">Spotify</a>
         <a href="countdown.html">Anniversary Countdown</a>
-        <a href="shoppinglist.html">Shared Shopping List</a>
     </div>
 
     <div class="content">
         <div class="photo-container">
-            <img src="/images/chloeBikini.jpg" alt="Our Photo 1">
-            <img src="/images/bridgeKiss.jpg" alt="Our Photo 2">
-            <img src="https://via.placeholder.com/400x250/90EE90/FFFFFF?text=Photo+3" alt="Our Photo 3">
-            <img src="https://via.placeholder.com/320x220/FFDAB9/FFFFFF?text=Photo+4">
-            <img src="https://via.placeholder.com/280x300/C0C0C0/FFFFFF?text=Photo+5">
-            <img src="https://via.placeholder.com/350x280/87CEEB/FFFFFF?text=Photo+6">
-            <img src="https://via.placeholder.com/270x200/DDA0DD/FFFFFF?text=Photo+7">
-            <img src="https://via.placeholder.com/380x250/F0E68C/FFFFFF?text=Photo+8">
-            <img src="https://via.placeholder.com/290x310/B0E0E6/FFFFFF?text=Photo+9">
-            <img src="https://via.placeholder.com/310x240/FFB6C1/FFFFFF?text=Photo+10">
-            <img src="https://via.placeholder.com/260x330/ADD8E6/FFFFFF?text=Photo+11">
-            <img src="https://via.placeholder.com/330x260/90EE90/FFFFFF?text=Photo+12">
+            <img src="/images/bridgeKiss.jpg">
+            <img src="/images/beach.jpg" >
+            <img src="/images/carnap.jpg" >
+            <img src="/images/chloeBikini.jpg" >
+            <img src="/images/couchhug.jpg" >
+            <img src="/images/snowkiss.jpg" >
+            <img src="/images/flightKiss.jpg" >
+            <img src="/images/formal1.jpg" >
+            <img src="/images/formal2.jpg" >
+            <img src="/images/guineapig.jpg" >
+            <img src="/images/hospital.jpg" >
+            <img src="/images/couch.jpg" >
+            <img src="/images/husky.jpg" >
+            <img src="/images/meccha.jpg" >
+            <img src="/images/nighttimedeer.jpg" >
+            <img src="/images/sexyBikini.jpg" >
+            <img src="/images/snow.jpg" >
             </div>
         <div class="clearfix"></div> </div>
 
